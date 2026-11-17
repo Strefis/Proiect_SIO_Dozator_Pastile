@@ -35,10 +35,9 @@ Dacă vine ora unei doze noi și cutia încă are pastila de data trecută, doza
 | 7 | Servomotor SG90 |
 | 8 | LED-uri 3 mm (verde, roșu) |
 | 9 | Butoane |
-| 10 | Sursă 5V 2A |
+| 10 | Sursă 5V 2A (pentru motor pas cu pas, servomotor) |
 | 11 | Buzzer |
 | 12 | Rezistente pentru LED-uri |
-| 13 | Sursa alimentare 5V 2A (pentru motor pas cu pas, servomotor) |
 
 ## Conexiuni
 
