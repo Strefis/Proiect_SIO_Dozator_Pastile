@@ -6,6 +6,8 @@
 namespace rtcModule {
 bool read(tmElements_t& time);
 bool chipPresent();
+bool write(tmElements_t &time);
+bool getCompileTime(tmElements_t &t);
 }
 
 #endif

@@ -1,11 +1,11 @@
 #include <Wire.h>
 #include <TimeLib.h>
 
-#include "controls/controls.h"
-#include "display/display.h"
-#include "i2c_scanner/i2c_scanner.h"
-#include "rtc/rtc.h"
-#include "sensor/sensor.h"
+#include "src/controls/controls.h"
+#include "src/display/display.h"
+#include "src/i2c_scanner/i2c_scanner.h"
+#include "src/rtc/rtc.h"
+#include "src/sensor/sensor.h"
 
 tmElements_t KT;
 
@@ -14,6 +14,14 @@ void setup() {
   Wire.begin();
   Wire.setClock(100000);   // slow the I2C bus to 100 kHz
   Serial.println("1. setup start");
+
+  //Setup RTC
+  tmElements_t ct;
+  if (rtcModule::getCompileTime(ct) && rtcModule::write(ct)) {
+    Serial.println("RTC set to compile time");
+  } else {
+    Serial.println("RTC write FAILED");
+  }
 
   displayModule::begin();
   Serial.println("2. display init done");
