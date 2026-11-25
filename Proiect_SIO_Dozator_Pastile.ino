@@ -3,6 +3,7 @@
 
 #include "src/controls/controls.h"
 #include "src/display/display.h"
+#include "src/finger/finger.h"
 #include "src/i2c_scanner/i2c_scanner.h"
 #include "src/rtc/rtc.h"
 #include "src/sensor/sensor.h"
@@ -34,6 +35,7 @@ void setup() {
 
   sensorModule::begin();
   controlsModule::begin();
+  fingerModule::begin();
 }
 
 void loop() {
@@ -57,4 +59,5 @@ void loop() {
   delay(1000);
 
   controlsModule::update();
+  fingerModule::update();
 }

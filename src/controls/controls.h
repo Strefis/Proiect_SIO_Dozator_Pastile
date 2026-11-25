@@ -4,6 +4,7 @@
 namespace controlsModule {
 void begin();
 void update();
+bool consumeSetLongPress();
 }
 
 #endif
