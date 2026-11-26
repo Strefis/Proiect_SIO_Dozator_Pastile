@@ -1,10 +1,10 @@
 #include "display.h"
 
 #include <Arduino.h>
-#include <SSD1306.h>
+#include <GyverOLED.h>
 
 namespace {
-  SSD1306 display;
+  GyverOLED<SSD1306_128x64, OLED_NO_BUFFER> display;
   bool fingerprintStateActive = false;
   bool fingerprintStatePersistent = false;
   unsigned long fingerprintStateStartedAt = 0;
@@ -13,25 +13,24 @@ namespace {
   void renderFingerprintState(const char* title, const char* message) {
     display.clear();
     display.setScale(1);
-    display.setCaret(0, 0);
+    display.setCursor(0, 0);   // coloana in pixeli, rand in linii de 8 px
     display.print(title);
-    display.setCaret(0, 16);
+    display.setCursor(0, 2);   // = y 16 px
     display.print(message);
-    display.update();
   }
 }
 
 namespace displayModule {
   void begin() {
     display.init();
-}
+    display.clear();
+  }
 
   void showStartupMessage() {
     display.clear();
     display.setScale(1);
-    display.setCaret(0, 0);
-    display.print("OLED OK");
-    display.update();
+    display.setCursor(0, 0);
+    display.print(F("OLED OK"));
   }
 
   void showClock(bool rtcReadOk, const tmElements_t& time) {
@@ -44,15 +43,15 @@ namespace displayModule {
 
     display.clear();
     display.setScale(1);
-    display.setCaret(0, 0);
-    display.print(rtcReadOk ? "RTC OK" : "RTC FAIL");
+    display.setCursor(0, 0);
+    display.print(rtcReadOk ? F("RTC OK") : F("RTC FAIL"));
     if (rtcReadOk) {
       display.setScale(2);
-      display.setCaret(0, 15);
+      display.setCursor(0, 2);
       display.print(time.Hour);
-      display.print(":");
+      display.print(':');
       display.print(time.Minute);
-      display.print(":");
+      display.print(':');
       display.print(time.Second);
     }
   }
@@ -60,12 +59,11 @@ namespace displayModule {
   void showFingerprintRecognized(unsigned int id) {
     display.clear();
     display.setScale(1);
-    display.setCaret(0, 0);
-    display.print("FINGERPRINT OK");
-    display.setCaret(0, 16);
-    display.print("ID: ");
+    display.setCursor(0, 0);
+    display.print(F("FINGERPRINT OK"));
+    display.setCursor(0, 2);
+    display.print(F("ID: "));
     display.print(id);
-    display.update();
 
     fingerprintStateActive = true;
     fingerprintStatePersistent = false;
@@ -91,6 +89,6 @@ namespace displayModule {
   }
 
   void update() {
-    display.update();
+    // fara buffer, textul apare direct pe ecran; nu mai e nimic de trimis
   }
 }

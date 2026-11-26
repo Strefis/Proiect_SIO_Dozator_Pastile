@@ -1,7 +1,7 @@
 #include "finger.h"
 
 #include <Arduino.h>
-#include <Fingerprint.h>
+#include <Adafruit_Fingerprint.h>
 #include <SoftwareSerial.h>
 
 #include "../controls/controls.h"
@@ -37,18 +37,15 @@ enum class SlotSearchResult { // rezultatele posibile ale cautarii unui slot dis
   SensorError
 };
 
-SlotSearchResult findAvailableId(uint8_t& id) { // cauta un slot disponibil pentru stocarea unei amprente si returneaza rezultatul cautarii
-  for (uint16_t candidate = 1; candidate <= 127; ++candidate) {
-    uint8_t result = finger.loadModel(candidate);
-    if (result == FINGERPRINT_BADLOCATION) {
-      id = static_cast<uint8_t>(candidate);
-      return SlotSearchResult::Available;
-    }
-    if (result != FINGERPRINT_OK) {
-      return SlotSearchResult::SensorError;
-    }
+SlotSearchResult findAvailableId(uint8_t& id) { // alege urmatorul ID liber pe baza numarului de amprente salvate
+  if (finger.getTemplateCount() != FINGERPRINT_OK) {
+    return SlotSearchResult::SensorError;
   }
-  return SlotSearchResult::Full;
+  if (finger.templateCount >= 127) {
+    return SlotSearchResult::Full;
+  }
+  id = static_cast<uint8_t>(finger.templateCount + 1);
+  return SlotSearchResult::Available;
 }
 
 bool enrollFingerprint(uint8_t id) { // inroleaza o amprenta noua si o stocheaza in slot-ul specificat
@@ -114,6 +111,12 @@ namespace fingerModule {
     void begin() {
     finger.begin(57600);
     sensorReady = finger.verifyPassword();
+    Serial.println(sensorReady ? F("Finger sensor OK") : F("Finger sensor NOT found"));
+
+    if (sensorReady && finger.getTemplateCount() == FINGERPRINT_OK) { // afiseaza cate amprente sunt deja salvate
+      Serial.print(F("Templates stored: "));
+      Serial.println(finger.templateCount);
+    }
     }
 
     void update() {
